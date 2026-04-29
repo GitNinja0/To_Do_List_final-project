@@ -23,6 +23,7 @@ public class User {
     private String username;
     private String password;
     private String email;
+    private String fullname;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_users", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id_user"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id_role"))
