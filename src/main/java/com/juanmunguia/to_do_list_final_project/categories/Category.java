@@ -6,6 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.OneToMany;
+import java.util.List;
+import com.juanmunguia.to_do_list_final_project.tasks.Task;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,5 +29,8 @@ public class Category {
     @Column(name = "id_category")
     Long id;
     String name;
+
+    @OneToMany(mappedBy = "category")
+    private List<Task> tasks;
 
 }

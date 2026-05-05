@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Set;
+import java.util.List;
+import com.juanmunguia.to_do_list_final_project.tasks.Task;
 
 @Entity
 @Table(name = "user")
@@ -28,4 +30,7 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_users", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id_user"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id_role"))
     Set<Role> roles;
+
+    @OneToMany(mappedBy = "author")
+    private List<Task> tasks;
 }

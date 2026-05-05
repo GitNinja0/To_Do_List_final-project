@@ -6,6 +6,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.ManyToMany;
+import java.util.List;
+import com.juanmunguia.to_do_list_final_project.tasks.Task;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,4 +30,7 @@ public class Tag {
     Long id;
 
     String name;
+
+    @ManyToMany(mappedBy = "tags")
+    private List<Task> tasks;
 }
