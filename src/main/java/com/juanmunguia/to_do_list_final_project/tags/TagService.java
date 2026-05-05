@@ -41,4 +41,10 @@ public class TagService {
         return repository.save(tagToUpdate);
     }
 
+    public String detele(Long id) {
+        Tag tagToDelete = repository.findById(id).orElseThrow(() -> new RuntimeException("  Tag not found"));
+        repository.delete(tagToDelete);
+        return "Tag deleted successfully";
+    }
+
 }
