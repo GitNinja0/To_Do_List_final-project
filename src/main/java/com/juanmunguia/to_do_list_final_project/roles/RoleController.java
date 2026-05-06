@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
-@RequestMapping(path = "{api-endpoint}/roles")
+@RequestMapping(path = "${api-endpoint}/roles")
 public class RoleController {
 
     private RoleService service;

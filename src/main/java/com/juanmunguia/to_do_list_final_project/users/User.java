@@ -9,7 +9,7 @@ import java.util.List;
 import com.juanmunguia.to_do_list_final_project.tasks.Task;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
