@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.juanmunguia.to_do_list_final_project.users.UserDTO;
 
 @RestController
-@RequestMapping(path = "${api-endpoint}/register")
+@RequestMapping(path = "${api-endpoint}/auth/register")
 public class RegisterController {
 
     private RegisterService service;

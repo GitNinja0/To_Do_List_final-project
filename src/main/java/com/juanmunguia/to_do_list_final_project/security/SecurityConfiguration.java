@@ -18,6 +18,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.juanmunguia.to_do_list_final_project.auth.CustomAccessDeniedHandler;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -27,6 +29,9 @@ public class SecurityConfiguration {
 
     @Autowired
     private AuthenticationEntryPoint CustomAuthenticationEntryPoint;
+
+    @Autowired
+    private CustomAccessDeniedHandler customAccessDeniedHandler;
 
     JpaUserDetailsService jpaUserDetailsService;
 
@@ -46,20 +51,31 @@ public class SecurityConfiguration {
                         .deleteCookies("JSESSIONID"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/").permitAll()
+                        .requestMatchers(endpoint + "/auth/register").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, endpoint + "/auth/login").hasAnyRole("USER", "ADMIN", "GESTOR")
-                        .requestMatchers(HttpMethod.POST, endpoint + "/register").permitAll()
                         .requestMatchers(HttpMethod.GET, endpoint + "/users/").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, endpoint + "/users/changePassword/{id}")
                         .hasAnyRole("USER", "ADMIN", "GESTOR")
                         .requestMatchers(HttpMethod.PUT, endpoint + "/users/changeFullName/{id}")
                         .hasAnyRole("USER", "ADMIN", "GESTOR")
                         .requestMatchers(HttpMethod.PUT, endpoint + "/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, endpoint + "/users/*/promote").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, endpoint + "/users/*/demote").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, endpoint + "/roles/changeRole/{id}").hasRole("ADMIN")
+                        .requestMatchers(endpoint + "/manager/categories/**").hasAnyRole("ADMIN", "GESTOR")
+                        .requestMatchers(endpoint + "/categories/**").hasAnyRole("USER", "ADMIN", "GESTOR")
+                        .requestMatchers(endpoint + "/task/**").hasAnyRole("USER", "ADMIN", "GESTOR")
+                        .requestMatchers(endpoint + "/tag/**").hasAnyRole("USER", "ADMIN", "GESTOR")
+                        .requestMatchers(endpoint + "/dashboard/**").hasAnyRole("USER", "ADMIN", "GESTOR")
+                        .requestMatchers(endpoint + "/user/profile").hasAnyRole("USER", "ADMIN", "GESTOR")
+                        .requestMatchers(endpoint + "/task/**").hasAnyRole("USER", "ADMIN", "GESTOR")
                         .anyRequest().authenticated())
                 .userDetailsService(jpaUserDetailsService)
                 .httpBasic(basic -> basic.authenticationEntryPoint(CustomAuthenticationEntryPoint))
+                .exceptionHandling(ex -> ex.accessDeniedHandler(customAccessDeniedHandler))
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.headers(header -> header.frameOptions(frame -> frame.sameOrigin()));
 

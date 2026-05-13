@@ -32,4 +32,14 @@ public class UserController {
     public ResponseEntity<User> changeFullName(@PathVariable Long id, @RequestBody UserDTO dto) throws Exception {
         return ResponseEntity.accepted().body(service.changeFullName(dto, id));
     }
+
+    @PostMapping("/{id}/promote")
+    public ResponseEntity<User> promoteUser(@PathVariable Long id) {
+        return ResponseEntity.ok(service.promoteToGestor(id));
+    }
+
+    @PostMapping("/{id}/demote")
+    public ResponseEntity<User> demoteUser(@PathVariable Long id) {
+        return ResponseEntity.ok(service.demoteToUser(id));
+    }
 }
