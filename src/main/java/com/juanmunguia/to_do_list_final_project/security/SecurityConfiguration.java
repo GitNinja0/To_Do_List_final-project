@@ -87,7 +87,8 @@ public class SecurityConfiguration {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
         configuration
-                .setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://printgo.factoriaf5asturias.org/"));
+                .setAllowedOrigins(Arrays.asList("http://localhost:5173",
+                        "https://https://to-do-list-final-project-front.vercel.app/"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
