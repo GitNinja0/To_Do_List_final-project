@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.security.Principal;
 
 @RestController
@@ -18,7 +20,9 @@ public class DashboardController {
     }
 
     @GetMapping
-    public ResponseEntity<DashboardDTO> getDashboard(Principal principal) {
-        return ResponseEntity.ok(dashboardService.getDashboardStats(principal.getName()));
+    public ResponseEntity<DashboardDTO> getDashboard(
+            Principal principal,
+            @RequestParam(required = false) String username) {
+        return ResponseEntity.ok(dashboardService.getDashboardStats(principal.getName(), username));
     }
 }

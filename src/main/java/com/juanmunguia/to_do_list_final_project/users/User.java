@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import com.juanmunguia.to_do_list_final_project.tasks.Task;
 
@@ -31,6 +32,7 @@ public class User {
     @JoinTable(name = "role_users", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id_user"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id_role"))
     Set<Role> roles;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "author")
     private List<Task> tasks;
 }

@@ -53,23 +53,36 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/").permitAll()
                         .requestMatchers(endpoint + "/auth/register").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, endpoint + "/auth/login").hasAnyRole("USER", "ADMIN", "GESTOR")
-                        .requestMatchers(HttpMethod.GET, endpoint + "/users/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, endpoint + "/auth/login")
+                        .hasAnyAuthority("USER", "ADMIN", "GESTOR", "ROLE_USER", "ROLE_ADMIN", "ROLE_GESTOR")
+                        .requestMatchers(HttpMethod.GET, endpoint + "/users/")
+                        .hasAnyAuthority("ADMIN", "ROLE_ADMIN", "GESTOR", "ROLE_GESTOR")
                         .requestMatchers(HttpMethod.PUT, endpoint + "/users/changePassword/{id}")
-                        .hasAnyRole("USER", "ADMIN", "GESTOR")
+                        .hasAnyAuthority("USER", "ADMIN", "GESTOR", "ROLE_USER", "ROLE_ADMIN", "ROLE_GESTOR")
                         .requestMatchers(HttpMethod.PUT, endpoint + "/users/changeFullName/{id}")
-                        .hasAnyRole("USER", "ADMIN", "GESTOR")
-                        .requestMatchers(HttpMethod.PUT, endpoint + "/users/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, endpoint + "/users/*/promote").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, endpoint + "/users/*/demote").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, endpoint + "/roles/changeRole/{id}").hasRole("ADMIN")
-                        .requestMatchers(endpoint + "/manager/categories/**").hasAnyRole("ADMIN", "GESTOR")
-                        .requestMatchers(endpoint + "/categories/**").hasAnyRole("USER", "ADMIN", "GESTOR")
-                        .requestMatchers(endpoint + "/task/**").hasAnyRole("USER", "ADMIN", "GESTOR")
-                        .requestMatchers(endpoint + "/tag/**").hasAnyRole("USER", "ADMIN", "GESTOR")
-                        .requestMatchers(endpoint + "/dashboard/**").hasAnyRole("USER", "ADMIN", "GESTOR")
-                        .requestMatchers(endpoint + "/user/profile").hasAnyRole("USER", "ADMIN", "GESTOR")
-                        .requestMatchers(endpoint + "/task/**").hasAnyRole("USER", "ADMIN", "GESTOR")
+                        .hasAnyAuthority("USER", "ADMIN", "GESTOR", "ROLE_USER", "ROLE_ADMIN", "ROLE_GESTOR")
+                        .requestMatchers(HttpMethod.PUT, endpoint + "/users/**").hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, endpoint + "/users/*/promote")
+                        .hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.POST, endpoint + "/users/*/demote")
+                        .hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+                        .requestMatchers(HttpMethod.PUT, endpoint + "/roles/changeRole/{id}")
+                        .hasAnyAuthority("ADMIN", "ROLE_ADMIN")
+                        .requestMatchers(endpoint + "/manager/categories/**")
+                        .hasAnyAuthority("ADMIN", "GESTOR", "ROLE_ADMIN", "ROLE_GESTOR")
+                        .requestMatchers(endpoint + "/categories/**")
+                        .hasAnyAuthority("USER", "ADMIN", "GESTOR", "ROLE_USER", "ROLE_ADMIN", "ROLE_GESTOR")
+                        .requestMatchers(endpoint + "/task/**")
+                        .hasAnyAuthority("USER", "ADMIN", "GESTOR", "ROLE_USER", "ROLE_ADMIN", "ROLE_GESTOR")
+                        .requestMatchers(endpoint + "/tag/**")
+                        .hasAnyAuthority("USER", "ADMIN", "GESTOR", "ROLE_USER", "ROLE_ADMIN", "ROLE_GESTOR")
+                        .requestMatchers(endpoint + "/dashboard/**")
+                        .hasAnyAuthority("USER", "ADMIN", "GESTOR", "ROLE_USER", "ROLE_ADMIN", "ROLE_GESTOR")
+                        .requestMatchers(endpoint + "/user/profile")
+                        .hasAnyAuthority("USER", "ADMIN", "GESTOR", "ROLE_USER", "ROLE_ADMIN", "ROLE_GESTOR")
+                        .requestMatchers(endpoint + "/task/**")
+                        .hasAnyAuthority("USER", "ADMIN", "GESTOR", "ROLE_USER", "ROLE_ADMIN", "ROLE_GESTOR")
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .userDetailsService(jpaUserDetailsService)
                 .httpBasic(basic -> basic.authenticationEntryPoint(CustomAuthenticationEntryPoint))
@@ -86,10 +99,12 @@ public class SecurityConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration
-                .setAllowedOrigins(Arrays.asList("http://localhost:5173",
-                        "https://https://to-do-list-final-project-front.vercel.app/"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "http://localhost:5173",
+                "https://*.vercel.app",
+                "https://to-do-list-final-project-front.vercel.app"
+        ));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

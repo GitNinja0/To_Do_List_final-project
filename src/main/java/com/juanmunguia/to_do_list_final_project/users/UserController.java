@@ -42,4 +42,9 @@ public class UserController {
     public ResponseEntity<User> demoteUser(@PathVariable Long id) {
         return ResponseEntity.ok(service.demoteToUser(id));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<User> deleteUser(@PathVariable Long id) throws Exception {
+        return ResponseEntity.ok(service.deleteUser(id));
+    }
 }

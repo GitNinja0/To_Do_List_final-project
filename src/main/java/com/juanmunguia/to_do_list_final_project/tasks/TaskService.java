@@ -33,18 +33,49 @@ public class TaskService {
     }
 
     public Task getByIdAndAuthor(Long id, String username) {
-        return repository.findByIdAndAuthorUsername(id, username)
-                .orElseThrow(() -> new RuntimeException("Task not found or not owned by user"));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        boolean isPrivileged = user.getRoles().stream()
+                .anyMatch(r -> r.getName().toUpperCase().contains("ADMIN") || r.getName().toUpperCase().contains("GESTOR"));
+
+        if (isPrivileged) {
+            return repository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Task not found"));
+        } else {
+            return repository.findByIdAndAuthorUsername(id, username)
+                    .orElseThrow(() -> new RuntimeException("Task not found or not owned by user"));
+        }
     }
 
     public Task createTask(TaskDTO dto, String username) {
-        User author = userRepository.findByUsername(username)
+        User creator = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
+        User author = creator;
+        boolean isPrivileged = creator.getRoles().stream()
+                .anyMatch(r -> r.getName().toUpperCase().contains("ADMIN") || r.getName().toUpperCase().contains("GESTOR"));
+        
+        if (isPrivileged && dto.getAssignedUsername() != null && !dto.getAssignedUsername().trim().isEmpty()) {
+            author = userRepository.findByUsername(dto.getAssignedUsername().trim())
+                    .orElse(creator);
+        }
+
         Category category = null;
         if (dto.getCategoryId() != null) {
             category = categoryRepository.findById(dto.getCategoryId())
                     .orElseThrow(() -> new RuntimeException("Category not found"));
+        }
+
+        java.util.List<Tag> tags = new java.util.ArrayList<>();
+        if (dto.getTagIds() != null) {
+            if (dto.getTagIds().size() > 3) {
+                throw new RuntimeException("A task can have a maximum of 3 tags");
+            }
+            for (Long tagId : dto.getTagIds()) {
+                Tag tag = tagRepository.findById(tagId)
+                        .orElseThrow(() -> new RuntimeException("Tag not found with ID " + tagId));
+                tags.add(tag);
+            }
         }
 
         Task newTask = Task.builder()
@@ -57,6 +88,7 @@ public class TaskService {
                 .createdAt(LocalDate.now().toString())
                 .author(author)
                 .category(category)
+                .tags(tags)
                 .build();
         
         return repository.save(newTask);
@@ -79,6 +111,31 @@ public class TaskService {
         } else {
             task.setCategory(null);
         }
+
+        // Handle changing assignment if privileged
+        User updater = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        boolean isPrivileged = updater.getRoles().stream()
+                .anyMatch(r -> r.getName().toUpperCase().contains("ADMIN") || r.getName().toUpperCase().contains("GESTOR"));
+        
+        if (isPrivileged && dto.getAssignedUsername() != null && !dto.getAssignedUsername().trim().isEmpty()) {
+            User newAuthor = userRepository.findByUsername(dto.getAssignedUsername().trim())
+                    .orElseThrow(() -> new RuntimeException("Assigned user not found"));
+            task.setAuthor(newAuthor);
+        }
+
+        java.util.List<Tag> tags = new java.util.ArrayList<>();
+        if (dto.getTagIds() != null) {
+            if (dto.getTagIds().size() > 3) {
+                throw new RuntimeException("A task can have a maximum of 3 tags");
+            }
+            for (Long tagId : dto.getTagIds()) {
+                Tag tag = tagRepository.findById(tagId)
+                        .orElseThrow(() -> new RuntimeException("Tag not found with ID " + tagId));
+                tags.add(tag);
+            }
+        }
+        task.setTags(tags);
 
         return repository.save(task);
     }

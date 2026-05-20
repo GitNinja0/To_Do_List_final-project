@@ -1,26 +1,47 @@
 package com.juanmunguia.to_do_list_final_project.tasks;
 
 import com.juanmunguia.to_do_list_final_project.tags.Tag;
+import com.juanmunguia.to_do_list_final_project.users.User;
+import com.juanmunguia.to_do_list_final_project.users.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class DashboardService {
 
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
-    public DashboardService(TaskRepository taskRepository) {
+    public DashboardService(TaskRepository taskRepository, UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
-    public DashboardDTO getDashboardStats(String username) {
-        List<Task> userTasks = taskRepository.findByAuthorUsername(username);
+    public DashboardDTO getDashboardStats(String loggedInUsername, String targetUsername) {
+        Optional<User> userOpt = userRepository.findByUsername(loggedInUsername);
+        boolean isAdmin = false;
+        if (userOpt.isPresent()) {
+            isAdmin = userOpt.get().getRoles().stream()
+                    .anyMatch(role -> role.getName().toUpperCase().contains("ADMIN"));
+        }
 
-        long totalTasks = userTasks.size();
+        List<Task> tasks;
+        if (isAdmin) {
+            if (targetUsername != null && !targetUsername.trim().isEmpty() && !targetUsername.equals("all")) {
+                tasks = taskRepository.findByAuthorUsername(targetUsername);
+            } else {
+                tasks = taskRepository.findAll();
+            }
+        } else {
+            tasks = taskRepository.findByAuthorUsername(loggedInUsername);
+        }
+
+        long totalTasks = tasks.size();
         long completedTasks = 0;
         long pendingTasks = 0;
         long overdueTasks = 0;
@@ -32,7 +53,7 @@ public class DashboardService {
         String todayString = LocalDate.now().toString();
         LocalDate todayDate = LocalDate.now();
 
-        for (Task task : userTasks) {
+        for (Task task : tasks) {
             // Status counts
             if (task.isCompleted()) {
                 completedTasks++;

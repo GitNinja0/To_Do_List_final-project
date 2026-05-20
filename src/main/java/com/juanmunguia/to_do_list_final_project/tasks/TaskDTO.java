@@ -18,4 +18,6 @@ public class TaskDTO {
     private LocalDate deadline;
     private boolean completed;
     private Long categoryId;
+    private String assignedUsername;
+    private java.util.List<Long> tagIds;
 }

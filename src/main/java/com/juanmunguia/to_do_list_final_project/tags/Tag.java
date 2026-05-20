@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.ManyToMany;
 import java.util.List;
 import com.juanmunguia.to_do_list_final_project.tasks.Task;
@@ -31,6 +32,7 @@ public class Tag {
 
     String name;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "tags")
     private List<Task> tasks;
 }

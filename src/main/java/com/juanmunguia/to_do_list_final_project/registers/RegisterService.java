@@ -48,7 +48,12 @@ public class RegisterService {
 
     public void assignDefaultRole(User user) {
 
-        Role defaultRole = roleService.getRoleById(1L);
+        Role defaultRole = roleRepository.findByName("USER").orElseGet(() -> {
+            Role newRole = new Role();
+            newRole.setName("USER");
+            return roleRepository.save(newRole);
+        });
+
         Set<Role> roles = new HashSet<>();
         roles.add(defaultRole);
 
