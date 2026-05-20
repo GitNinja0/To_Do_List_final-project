@@ -24,6 +24,10 @@ public class UserService {
         return repository.findAll();
     }
 
+    public org.springframework.data.domain.Page<User> getPaginatedUsers(String search, String role, org.springframework.data.domain.Pageable pageable) {
+        return repository.searchUsers(search, role, pageable);
+    }
+
     public User deleteUser(Long id) throws Exception {
         User userToDelete = repository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
         repository.delete(userToDelete);

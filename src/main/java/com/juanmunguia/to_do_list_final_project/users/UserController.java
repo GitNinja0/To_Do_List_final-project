@@ -19,8 +19,13 @@ public class UserController {
     }
 
     @GetMapping(path = "/")
-    public List<User> getAllUsers() {
-        return service.getAllUsers();
+    public org.springframework.data.domain.Page<User> getAllUsers(
+            @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false, defaultValue = "") String role,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        return service.getPaginatedUsers(search, role, pageable);
     }
 
     @PutMapping(path = "/changePassword/{id}")
