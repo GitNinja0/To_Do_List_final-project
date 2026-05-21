@@ -5,7 +5,7 @@ Este es el repositorio backend de la aplicación To-Do List. Provee una API REST
 ## Arquitectura y Tecnologías
 
 - **Framework**: Spring Boot 3 (Java 21)
-- **Base de Datos**: MySQL (y PostgreSQL soportado) con Spring Data JPA
+- **Base de Datos**: PostgreSQL con Spring Data JPA
 - **Seguridad**: Spring Security con JSON Web Tokens (JWT) y codificación Bcrypt para contraseñas.
 - **Construcción**: Maven
 - **Lombok**: Para reducir el código boilerplate.
@@ -30,13 +30,13 @@ Para correr la aplicación de forma local usando el perfil por defecto (o H2 en 
 
 ## Ejecución con Docker Compose
 
-El proyecto incluye un archivo `docker-compose.yml` que levanta tanto la base de datos MySQL como la propia aplicación Spring Boot.
+El proyecto incluye un archivo `docker-compose.yml` que levanta tanto la base de datos PostgreSQL como la propia aplicación Spring Boot.
 
 ```bash
 docker-compose up --build
 ```
 
-Asegúrate de que el puerto `8080` (App) y `3306` (MySQL) estén libres en tu máquina.
+Asegúrate de que el puerto `8080` (App) y `5432` (PostgreSQL) estén libres en tu máquina.
 
 ## Endpoints Principales
 

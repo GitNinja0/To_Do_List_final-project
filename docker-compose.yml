@@ -1,17 +1,18 @@
 version: '3.8'
 
 services:
-  # Base de datos MySQL
-  mysql-db:
-    image: mysql:8.0
-    container_name: mi-mysql-db
+  # Base de datos PostgreSQL
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: mi-postgres-db
     environment:
-      MYSQL_ROOT_PASSWORD: supersecreta
-      MYSQL_DATABASE: todolist_db
+      POSTGRES_PASSWORD: supersecreta
+      POSTGRES_DB: todolist_db
+      POSTGRES_USER: root
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - app-network
 
@@ -25,17 +26,17 @@ services:
       # Configuramos el perfil deploy
       - SPRING_PROFILES_ACTIVE=deploy
       # Pasamos las variables de entorno de BD
-      - DB_HOST=mysql-db
+      - DB_HOST=postgres-db
       - DB_NAME=todolist_db
       - DB_USER=root
       - DB_PASSWORD=supersecreta
     depends_on:
-      - mysql-db
+      - postgres-db
     networks:
       - app-network
 
 volumes:
-  mysql_data:
+  postgres_data:
 
 networks:
   app-network:
