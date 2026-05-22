@@ -38,6 +38,13 @@ docker-compose up --build
 
 Asegúrate de que el puerto `8080` (App) y `5432` (PostgreSQL) estén libres en tu máquina.
 
+## Documentación de la API (Swagger)
+
+La documentación interactiva de la API está generada automáticamente con OpenAPI (Swagger). Una vez arrancada la aplicación, puedes acceder a ella a través de:
+
+- **Swagger UI:** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+- **OpenAPI JSON:** [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+
 ## Endpoints Principales
 
 - `POST /api/auth/register` - Registro de nuevos usuarios
